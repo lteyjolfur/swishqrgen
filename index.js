@@ -26,15 +26,17 @@ async function create_image_with_text(png_content, text, output_path) {
             console.error('Error saving image to file:', error);
         }
     }
-    save_png_to_file(png_content, text + 'test.png');
 
     const image = await loadImage(png_content);
     const canvas = createCanvas(image.width, image.height + 50);
     const ctx = canvas.getContext('2d');
 
     // Draw pink background
-    ctx.fillStyle = 'rgb(255, 192, 203)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const gradient = ctx.createLinearGradient(0, canvas.height - 50, 0, canvas.height);
+    gradient.addColorStop(0, '#D0385C'); // Bottom left
+    gradient.addColorStop(1, '#B62F8D'); // Top right
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
 
     // Draw PNG image
     ctx.drawImage(image, 0, 0);
@@ -60,11 +62,11 @@ const endpoint = "https://mpc.getswish.net/qrg-swish/api/v1/prefilled"
 
 const swishDataRaw = [
     { value: '700', message: "TA Nybörjare Lekjudo" },
-    { value: '1000', message: "TA öv 7år - 20år" },
-    { value: '1200', message: "TA öv 20 år" },
-    { value: '2500', message: "TA Familj" },
+    { value: '1200', message: "TA öv 7år u 20år" },
+    { value: '1400', message: "TA öv 20 år" },
+    { value: '3000', message: "TA Familj" },
     { value: '200', message: "Medlemsavgift Aktiv" },
-    { value: '200', message: "Medlemsavgift Familj" },
+    // { value: '3000', message: "Medlemsavgift Familj" },
     { value: '200', message: "Stödmedlem" },
 ]
 
@@ -87,7 +89,7 @@ const makeSwishData = (amount, message) => {
             value: message,
             editable: false
         },
-        size: 300,
+        size: 244,
         border: 2,
         transparent: false,
     }
