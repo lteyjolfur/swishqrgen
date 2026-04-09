@@ -1,9 +1,9 @@
-const fs = require("fs");
-const axios = require("axios");
-const { createCanvas, loadImage } = require("canvas");
+import fs from "fs";
+import axios from "axios";
+import { createCanvas, loadImage } from "canvas";
 
 // Function to make API calls and retrieve PNGs
-async function get_png_from_api(url, data) {
+export async function get_png_from_api(url, data) {
   try {
     const response = await axios.post(url, data, {
       responseType: "arraybuffer",
@@ -11,12 +11,32 @@ async function get_png_from_api(url, data) {
     return response.data;
   } catch (error) {
     console.error(`Failed to retrieve PNG from ${url}: ${error.message}`);
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      console.error("Status:", error.response.status);
+      console.error("Headers:", error.response.headers);
+      // If the response is not binary, print as text
+      try {
+        console.error("Body:", error.response.data.toString());
+      } catch {
+        console.error("Body: <binary data>");
+      }
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error("No response received. Request:", error.request);
+    } else {
+      // Something happened in setting up the request
+      console.error("Error config:", error.config);
+    }
+    // Optionally, log the request data
+    console.error("Request data:", data);
     return null;
   }
 }
 
 // Function to create a new image with text on a pink background
-async function create_image_with_text(png_content, text, output_path) {
+export async function create_image_with_text(png_content, text, output_path) {
+  // Load the PNG image from the buffer
   const image = await loadImage(png_content);
   const canvas = createCanvas(image.width, image.height + 50);
   const ctx = canvas.getContext("2d");
@@ -52,11 +72,6 @@ async function create_image_with_text(png_content, text, output_path) {
   });
 }
 
-module.exports = {
-  create_image_with_text,
-  get_png_from_api,
-};
-
 // Endpoint
 const endpoint = "https://mpc.getswish.net/qrg-swish/api/v1/prefilled";
 
@@ -70,14 +85,10 @@ const swishDataRaw = [
   { value: "200", message: "Stödmedlem" },
 ];
 
-const makeSwishData = (amount, message) => {
+export const makeSwishData = (amount, message) => {
   return {
     format: "png",
     payee: {
-      value: "1233630423",
-      editable: false,
-    },
-    amount: {
       value: amount,
       editable: false,
     },
@@ -85,7 +96,7 @@ const makeSwishData = (amount, message) => {
       value: message,
       editable: false,
     },
-    size: 244,
+    size: 300,
     border: 2,
     transparent: false,
   };
