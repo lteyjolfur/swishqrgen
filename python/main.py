@@ -6,7 +6,7 @@ import os
 from PIL import Image, ImageDraw, ImageOps
 __author__ = "Your Name"
 __version__ = "0.1.0"
-__license__ = "MIT"
+__license__ = "GNU General Public License v3.0"
 
 
 
@@ -49,7 +49,6 @@ def process_images_in_subfolder(subfolder, corner_radius):
             # Add rounded corners to the image
             image_with_rounded_corners = make_corners_transparent(image, corner_radius)
             # Save or display the result
-            # For demonstration purposes, let's save the modified images
             output_path = os.path.join(current_directory, subfolder+"_processed", f"rounded_{filename}")
             image_with_rounded_corners.save(output_path)
 
@@ -65,5 +64,4 @@ def main():
 
 
 if __name__ == "__main__":
-    """ This is executed when run from the command line """
     main()
